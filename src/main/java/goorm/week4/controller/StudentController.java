@@ -2,9 +2,11 @@ package goorm.week4.controller;
 
 import goorm.week4.dto.StudentDto;
 import goorm.week4.service.StudentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -33,12 +35,14 @@ public class StudentController {
         }
     }
 
-    /**
-     * TODO
-     * Student 엔티티 생성을 위한 POST 요청 처리 로직 구현
-     */
     @PostMapping
-    public ResponseEntity<?> createStudent(/*구현 필요*/) {
+    public ResponseEntity<?> createStudent(@Valid @RequestBody StudentDto studentDto, BindingResult result) {
+        if (result.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+
+            return ResponseEntity.badRequest().body(errors);  //유효성 검사 실패 시 에러 메시지 반환
+        }
 
         StudentDto savedStudent = studentService.saveStudent(studentDto);
 

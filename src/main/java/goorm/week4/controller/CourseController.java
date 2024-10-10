@@ -2,9 +2,11 @@ package goorm.week4.controller;
 
 import goorm.week4.dto.CourseDto;
 import goorm.week4.service.CourseService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -33,12 +35,16 @@ public class CourseController {
         }
     }
 
-    /**
-     * TODO
-     * Course 엔티티 생성을 위한 POST 요청 처리 로직 구현
-     */
     @PostMapping
-    public ResponseEntity<?> createCourse(/*구현 필요*/) {
+    public ResponseEntity<?> createCourse(@Valid @RequestBody CourseDto courseDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(error -> {
+                errors.put(error.getField(), error.getDefaultMessage());
+            });
+
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
 
         CourseDto savedCourse = courseService.saveCourse(courseDto);
 

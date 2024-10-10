@@ -2,6 +2,7 @@ package goorm.week4.controller;
 
 import goorm.week4.dto.StudentCourseDto;
 import goorm.week4.service.StudentCourseService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,17 +43,13 @@ public class StudentCourseController {
         return ResponseEntity.ok(studentIds);
     }
 
-    /**
-     * TODO
-     * StudentCourse 엔티티 생성을 위한 POST 요청 처리 로직 구현
-     */
     @PostMapping
-    public ResponseEntity<?> createStudentCourse(/*구현 필요*/) {
+    public ResponseEntity<?> createStudentCourse(@Valid @RequestBody StudentCourseDto studentCourseDto) {
         //학생 또는 수업 정보가 없을 경우 404 메시지 반환
         try {
-
+            return ResponseEntity.ok(studentCourseService.saveStudentCourse(studentCourseDto));
         } catch (IllegalArgumentException e) {
-
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 }
